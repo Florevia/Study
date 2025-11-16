@@ -37,46 +37,46 @@ setTimeout(() => {
 
 ```js
 //下面代码的输出结果是什么
-    const pro1 = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(1)
-      }, 1000)
-    })
+ const pro1 = new Promise((resolve, reject) => {
+   setTimeout(() => {
+     resolve(1)
+   }, 1000)
+ })
 
-    const pro2 = pro1.catch((data) => {
-      console.log(data)
-      return data + 1
-    })
+ const pro2 = pro1.catch((data) => {
+   console.log(data)
+   return data + 1
+ })
 
-    const pro3 = pro2.then((data) => {
-      console.log(data)
-    })
+ const pro3 = pro2.then((data) => {
+   console.log(data)
+ })
 
-    console.log(pro1, pro2, pro3)
+ console.log(pro1, pro2, pro3)
 
-    setTimeout(() => {
-      console.log(pro1, pro2, pro3)
-    }, 2000)
+ setTimeout(() => {
+   console.log(pro1, pro2, pro3)
+ }, 2000)
 ```
 
 ### 输出题3
 
 ```js
 //下面代码的输出结果是什么
-  new Promise((resolve, reject) => {
-  throw new Error(1)
-  })
-  .then((res) => {
-    console.log(res)
-    return new Error('2')
-  })
-  .catch((err) => {
-    throw err
-    return 3 //注意这里！
-  })
-  .then((res) => {
-    console.log(res)
-  })
+ new Promise((resolve, reject) => {
+ throw new Error(1)
+ })
+ .then((res) => {
+   console.log(res)
+   return new Error('2')
+ })
+ .catch((err) => {
+   throw err
+   return 3 //注意这里！
+ })
+ .then((res) => {
+   console.log(res)
+ })
 ```
 
 ### 输出题4
@@ -110,6 +110,7 @@ setTimeout(() => {
   const n = await 1;
   console.log(n);
  }
+
 (async () => {
   await m();
   console.log(2);
@@ -138,4 +139,78 @@ m3().then((n) => {
 })
 m3()
 console.log(4)
+```
+
+### 判断对错7
+
+下面每一句请判断 对 / 错，并简单写一下理由（自己对自己解释即可）：
+
+1. then 返回的一定是一个新的 Promise。
+2. 如果 then 的回调里 return undefined，那这个 then 返回的Promise 状态是 rejected。
+3. 如果 then 的回调里 return 一个 Promise，那这个 then 返的 Promise 会“跟随”这个 Promise 的状态。
+4. 如果 then 的回调里抛异常（throw），那么 then 返回的Promise 会变成 rejected。
+5. 如果 then 的回调里什么都不写（连 return 都没有），那返回的Promise 的值是 undefined。
+
+### 输出题8
+
+```js
+Promise.resolve(1)
+  .then(2)     
+  //如果 onFulfilled 或 onRejected 不是函数，就会被忽略，相当于没传，这时值会原样透传
+  .then(Promise.resolve(3))
+  .then(console.log);
+```
+
+### 考点：
+- async 函数本质上返回 Promise
+- await 会把后面的代码丢到微任务队列里
+- 不 await 的时候，async 函数里就是普通同步代码
+- .then 也是微任务
+
+### 输出题9
+
+```js
+async function fn() {
+  console.log(1);
+  return 2;
+}
+
+fn().then(res => {
+  console.log(res);
+});
+
+console.log(3);
+```
+### 输出题10
+
+```js
+var a;
+
+var b = new Promise((resolve, reject) => {
+  console.log('promise1');
+  setTimeout(() => {
+    resolve();
+  }, 1000);
+})
+  .then(() => {
+    console.log('promise2');
+  })
+  .then(() => {
+    console.log('promise3');
+  })
+  .then(() => {
+    console.log('promise4');
+  });
+
+a = new Promise(async (resolve, reject) => {
+  console.log(a);
+  await b;
+  console.log(a);
+  console.log('after1');
+  await a;
+  resolve(true);
+  console.log('after2');
+});
+
+console.log('end');
 ```
