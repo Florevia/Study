@@ -214,3 +214,29 @@ a = new Promise(async (resolve, reject) => {
 
 console.log('end');
 ```
+
+### 输出题11
+
+```js
+console.log(1);
+
+setTimeout(() => {
+  console.log(2);
+  const p = new Promise(resolve => resolve(3));
+  p.then(result => console.log(result));
+}, 0);
+
+const p = new Promise(resolve => {
+  setTimeout(() => {
+    console.log(4);
+  }, 0);
+  resolve(5);
+});
+
+p.then(result => console.log(result));
+
+const p2 = new Promise(resolve => resolve(6));
+p2.then(result => console.log(result));
+
+console.log(7);
+```
