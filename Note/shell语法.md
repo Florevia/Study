@@ -10,12 +10,11 @@
 例：ls、cat、grep、ps、curl、sed、awk 等
 4. PATH变量：环境变量，告诉shell到那些目录里按顺序去寻找外部命令。用冒号分隔的一串目录。
 
+## shell命令
 
 ### pwd （Print Work Directory）
 
 查看当前所在的工作目录
-
----
 
 ### open
 
@@ -43,8 +42,6 @@ open -a "Finder" '/Users/lilin/Code/Notes'
 
 查看所有文件包括隐藏文件夹和隐藏文件
 
-- ![ls -a 结果解释](./img/ls%20-a%20结果解释.png)
-
 ### ls -l
 
 查看文件和文件夹详情
@@ -58,13 +55,9 @@ open -a "Finder" '/Users/lilin/Code/Notes'
 
 查看是不是一个仓库
 
----
-
 ### mkdir （make directory）
 
 创建一个文件夹
-
----
 
 ### touch
 
@@ -74,11 +67,9 @@ open -a "Finder" '/Users/lilin/Code/Notes'
 touch filename.md
 ```
 
----
-
 ### echo
 
-打印
+将一个进程的标准输出
 
 ---
 

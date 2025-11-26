@@ -1,48 +1,40 @@
-## git
+# git
 
-### 什么是 git 仓库？
+## 什么是 git 仓库？
 
 git 仓库就是放代码的地方
 
-### git status
+## git status
 
 查看仓库信息
 
-### git init
+## git init
 
 初始化/创建一个本地仓库
 
-### git add + filename
-
-### git add -A (git add -all)
-
+## git add
+提交到暂存区
 ```sh
 # 提交全部文件
+git add filename
 git add -A
+git add --all
 
 # 提交该目录下全部文件
 git add .
 ```
 
-提交到缓冲区，提交冷静期
-
----
-
-### git commit -m "备注信息"
+## git commit -m "备注信息"
 
 ```sh
 git commit -m "我写了个 shell.md，把它提交到 git 仓库"
 ```
 
----
-
-### git log
+## git log
 
 查看提交记录
 
----
-
-### git branch
+## git branch
 
 查看当前分支
 
@@ -62,29 +54,27 @@ git commit -m "我写了个 shell.md，把它提交到 git 仓库"
 
 新建分支
 
-本地仓库、main 分支 进行代码开发
+- 本地仓库、main 分支 进行代码开发
 
-远程仓库（github）、 无分支 保存代码
+- 远程仓库（github）、 无分支 保存代码
 
----
-
-### git switch + 分支名
+## git switch + 分支名
 
 转换到其他分支
 
-### git switch -c <分支名>
+## git switch -c <分支名>
 
 创建并转换到其他分支
 
----
-
-### git branch + git checkout /
+## git branch + git checkout /
 
 创建分支并转到该分支上
 
----
+## git branch -d branchname
 
-### git remote
+删除合并后的分支指针
+
+## git remote
 
 将本地仓库与远程仓库建立连接
 
@@ -92,13 +82,11 @@ git commit -m "我写了个 shell.md，把它提交到 git 仓库"
 git remote add <r-github/origin> <git@github.com:Florevia/notes.git/(url)>
 ```
 
-### git remote -v
+## git remote -v
 
 查看当前 git 仓库的远程仓库名
 
----
-
-### git push
+## git push
 
 ```sh
 git push <remote_repo_name> <local_branch_name：remote_branch_name>
@@ -114,25 +102,15 @@ git push -u <remote_repo_name> <branch_name：remote_branch_name>
 
 git push: 并推到远程仓库分支上
 
----
-
-### git push （origin） --delete （feature）
+## git push （origin） --delete （feature）
 
 删除远程分支
 
-### git checkout/switch
+## git checkout/switch
 
 检出/转换分支
 
----
-
-### git fetch --prune
-
-同步远程分支变化,更新远程列表
-
----
-
-### git clone
+## git clone url
 
 往本地拿远程仓库内容
 
@@ -144,20 +122,22 @@ git clone <repo-url>
 # 下载（克隆）所有分支
 ```
 
----
+## git fetch url
 
-### git fetch `url`
+将远程内容拉到本地
 
-## 将远程内容拉到本地
+## git fetch --prune
 
-### git rebase origin/main
+同步远程分支变化,更新远程列表，修剪掉（prune）那些远程已经不存在的分支引用。
+
+## git rebase origin/main
 
 将远程更新 线性对齐主干（线性）
 
 - 例：将A变基到B：
  git switch A --> git A rebase B
 
-### git merge origin/main
+## git merge origin/main
 
 将远程更新 合并 （有分支）
 
@@ -178,3 +158,19 @@ git rebase origin/main
 ```
 
 ![merge&rebase](./img/merge&rebase.png)
+
+## git reset
+
+- --soft 只动版本库，其他不动
+- --mixed 动版本库和暂存区，不动工作区
+- --hard 三个区域都同步回到老版本
+
+## git re --cached filename
+
+从暂存区删掉文件，但保留工作区文件
+
+## git restore
+
+恢复到之前的版本
+
+## 
