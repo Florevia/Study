@@ -1,4 +1,5 @@
-# vue2响应式原理
+# vue2响应式
+# 原理&局限性
 
 - 核心设计模式：观察者模式 (Observer Pattern)
 
@@ -137,3 +138,23 @@ notify (通知) 和 re-render (重新渲染)
 ## 异步更新队列
 
 Vue 的响应式更新是异步的。
+
+## 局限性
+
+依赖Object.defineProperty 劫持属性
+
+- 不能监听 属性新增 / 删除：
+- 需要 Vue.set / Vue.delete
+- 对数组的变更监听是通过重写数组方法（push/splice 等）
+- 对于深层嵌套对象，初始化时要做深度遍历，性能有一定损耗
+
+## Vue3 响应式的改进（Proxy）
+
+Vue3 使用 Proxy
+
+- 可以监听 属性的新增、删除、in 操作、for...in 遍历 等。
+- 更适合处理 深层嵌套对象，在访问时按需追踪，性能更好。
+- 实现上抽象出 reactive()、ref()、readonly() 等工具，响应式能力更灵活：
+  - reactive: 处理对象、数组
+  - ref: 处理基本类型 & 单值响应式
+  - computed: 派生状态，更加规范
