@@ -1,22 +1,16 @@
+// 引入 readline 模块用于处理用户输入
 const readline = require("readline");
-
+// 创建 readline 接口，用于从标准输入读取用户输入
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// const askQuestion = async
-// while (true) {
-//    rl.question("> ", (input) => {
-//   console.log(input)
-// })
 
-//   rl.close()
-
-// }
 function doSomething() {
   rl.question("请输入:", (input) => {
-    if (input === "exit") {
+    //递归出口
+    if (input === "exit") { 
     rl.close();
     return;
   };
@@ -26,12 +20,3 @@ function doSomething() {
 }
 doSomething();
 
-// let count = 1
-// function print() {
-//   if (count > 100) return //递归出口
-//   console.log(count)
-//   count++
-//   print()
-// }
-
-// print()

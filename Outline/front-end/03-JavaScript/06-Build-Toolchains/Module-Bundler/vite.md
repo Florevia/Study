@@ -23,7 +23,7 @@ Vite 是一个前端构建工具 + 开发服务器
 ## 常用命令
 
 ```zsh
-npm create vite@latest
+npm create/init vite # 创建一个新的 Vite 项目
 cd my-vite-app   # 进入项目目录（换成你自己的项目名）
 npm install      # 安装依赖（会生成 node_modules）
 ```

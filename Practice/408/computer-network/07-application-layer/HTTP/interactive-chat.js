@@ -1,3 +1,4 @@
+// 引入 readline 模块用于处理用户输入
 const readline = require('readline');
 
 // 创建 readline 接口用于接收用户输入
@@ -36,7 +37,7 @@ function askQuestion() {
           stream: false,
         }),
       });
-      
+      // 解析响应体为 JSON 格式
       const data = await response.json();
       const aiResponse = data.message.content;
       
@@ -51,6 +52,7 @@ function askQuestion() {
     } catch (error) {
       console.error('错误:', error);
       console.log('抱歉，发生了错误，请稍后再试。\n');
+      // 继续询问下一个问题
       askQuestion();
     }
   });
