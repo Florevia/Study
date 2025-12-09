@@ -1,4 +1,12 @@
+# 忽略 .DS_Store 文件
 .DS_Store
-shenjing.md
+# 缓存目录
 node_modules
 
+# 构建输出目录
+dist/
+dist-ssr/
+*.local
+
+# 生产环境构建文件
+build/

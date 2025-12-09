@@ -1,3 +1,8 @@
+
+//引入fs模块和path模块
+const fs = require("fs");
+const path = require("path");
+//定义ls工具
 const ls = {
   name: "ls",
   description: "list files",
@@ -8,19 +13,40 @@ const ls = {
     },
   },
 };
-
+//定义pwd工具
+ const pwd = {
+  name: "pwd",
+  description: "print working directory",
+  parameters: {
+    type: "object",
+    properties: {
+      dir: {type: "string"}
+    },
+  }
+ }
+//定义lsFn
 function lsFn({ dir }) {
-  //假装读目录
-  console.log("我在读", dir);
-  return ["index.html", "index.js", "fetch.js"];
+  fs.readdirSync(process.cwd(), (err, files) => {
+    if(err) {
+      console.log(err);
+      return;
+    }
+    console.log("当前目录下的文件有：",files);
+    return files
+  })
 }
 
+//定义pwdFn
+function pwdFn(dir) {
+  return 
+}
+//定义工具数组
 const tools = [];
 tools.push(ls);
-
+//定义历史记录数组
 let history = [];
 
-// 你提问
+// 提问
 const message = {
   role: "user",
   parts: [{ text: "src目录下有哪些文件？" }],

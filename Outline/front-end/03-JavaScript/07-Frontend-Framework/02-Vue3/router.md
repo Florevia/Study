@@ -99,3 +99,18 @@
 - router.replace(location)：替换当前这条历史记录。
 
 - router.back() / router.forward() / router.go(n)：控制浏览器历史栈前进后退。
+
+### $route
+
+```js
+$route = {
+  path: '/article/channel',        // 当前路径
+  name: 'ArticleChannel',          // 路由名称
+  params: {},                      // 路由参数
+  query: {},                       // URL 查询参数
+  hash: '',                        // URL hash
+  fullPath: '/article/channel',    // 完整路径
+  matched: [],                     // 匹配的路由记录
+  meta: {}                         // 路由元信息
+}
+```

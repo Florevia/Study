@@ -129,12 +129,73 @@ echo "llllllll" | cat > in.doc
 
 给user添加可执行权限
 
-### su 用户名
+### su 
 
-### su do 
+切换用户
 
+### sudo + 命令
 
-   
+以管理员权限执行命令
+
+### id 
+
+查看用户信息
+
+### lsof -P -n -i :<端口号>
+
+查看占用端口号的进程
+
+### vim 
+
+编辑文件
+
+### ps -p
+
+查看进程信息
+
+### kill -9 <进程号>
+
+强制终止进程
+
+### curl
+
+查看网络请求
+
+```zsh
+curl -X GET http://localhost:8297
+# 或者
+curl --request GET http://localhost:8297
+```
+## 环境变量
+
+### export 
+
+导出环境变量
+
+```zsh
+export <变量名>=<值>
+```
+
+### echo $<变量名>
+
+查看环境变量值
+
+```zsh
+
+echo $name
+```
+
+### unset <变量名>
+
+删除环境变量
+
+```zsh
+unset name
+```
+
+### env
+
+查看所有环境变量
 
 ### JavaScript 引擎
 
