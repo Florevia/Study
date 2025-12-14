@@ -173,4 +173,8 @@ git rebase origin/main
 
 恢复到之前的版本
 
-## 
+## 删除单个文件
+git rm --cached 文件名
+
+## 删除整个目录
+git rm -r --cached 目录名/

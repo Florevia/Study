@@ -12,6 +12,28 @@ pnpm install prettier --save-dev
 
 ## 配置文件格式
 
+- js
+  - .prettierrc.js
+  - prettier.config.js
+  - .prettierrc.mjs
+  - prettier.config.mjs
+  - .prettierrc.cjs
+  - prettier.config.cjs
+- ts
+  - .prettierrc.ts
+  - prettier.config.ts
+  - .prettierrc.cts
+  - prettier.config.cts
+  - .prettierrc.mts
+  - prettier.config.mts
+- json
+  - .prettierrc.json
+- yaml
+  - .prettierrc.yaml
+  - .prettierrc.yml
+- toml
+  - .prettierrc.toml
+
 - .prettierrc 的特点：
   - 文件格式：通常是 JSON 格式，不能包含注释或代码逻辑。
   - 简洁性：适用于简单的配置，只需定义 Prettier 相关的选项。

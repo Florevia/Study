@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      //  Vue 3 提供了两种创建组件的方式：
+      //  模板语法 ：使用 <template> 标签声明式地描述 UI
+      //  渲染函数 ：使用 JavaScript 函数式地描述 UI
+      const app = Vue.createApp({
+        __name: "App",
+        __file: "src/App.vue",
+        setup: function () {
+          const name = "aaa"
+          return {
+            name,
+          }
+        },
+        // h() 函数是 createElement 的缩写，用于创建虚拟 DOM 节点： h(元素类型, 属性对象, 子元素)
+        render: function () {
+          console.log(this.name)
+          // const h1 = Vue.h("h1", { class: "aa", id: "goushi" }, "hello");
+          // const div = Vue.h("div", { class: "aa", id: "goushi" }, [h1]);
+          const isActive = false;
+          return Vue.h("div", {
+            class: ["foo", "bar", { active: isActive }],
+            style: { color: "red" },
+          });
+        },
+      });
+      app.mount(document.querySelector("#app"));
+
+      // const div = document.createElement("div")
+      // const h1 = document.createElement("h1")
+      // div.appendChild(h1)
+    </script>
+  </body>
+</html>

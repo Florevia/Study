@@ -3,36 +3,25 @@ export default [
     rules: {
       // 可选项："error"、"warn"、"off"
       // 是否禁止 console 语句
-      "no-console": "warn",
+      'no-console': 'warn',
       // 是否禁止使用未定义的变量
-      "no-unused-vars": "error",
+      'no-unused-vars': 'error',
       // 是否禁止重新赋值 const 变量
-      "no-const-assign": "error",
+      'no-const-assign': 'error',
       // 是否禁止使用 debugger 语句
-      "no-debugger": "error", 
+      'no-debugger': 'error',
       // 是否禁止在变量使用前先声明
-      "no-use-before-define": "error",
+      'no-use-before-define': 'error',
       // 是否禁止使用未定义的变量
-      "no-undef": "error",
+      'no-undef': 'error'
     },
     languageOptions: {
       globals: {
-        window: "readonly",
-        console: "readonly",
+        window: 'readonly',
+        console: 'readonly'
       }
     },
-    // 插件配置
-    plugins: {
-      // 插件名：插件配置
-      "vue": {
-        // 插件规则配置
-        "rules": {
-          // 规则名：规则值
-          "vue/no-v-html": "error",
-        }
-      }
-    },
-    files: ["src/**/*.{js,css,html}"],
-    ignores: ["node_modules/**", "dist/**"],
+    files: ['src/**/*.{js,css,html}'],
+    ignores: ['node_modules/**', 'dist/**']
   }
-]
+];

@@ -6,7 +6,7 @@
 
 ##  目录
 
-1. [方式一：使用 Vite 脚手架（推荐）](#方式一使用-vite-脚手架推荐)
+1. [方式一：使用 Vite 脚手架](#方式一使用-vite-脚手架)
 2. [方式二：使用 Webpack 脚手架](#方式二使用-webpack-脚手架)
 3. [方式三：纯手动创建（Vite 版本）](#方式三纯手动创建vite-版本)
 4. [方式四：纯手动创建（Webpack 版本）](#方式四纯手动创建webpack-版本)
@@ -14,9 +14,7 @@
 
 ---
 
-## 方式一：使用 Vite 脚手架（推荐）
-
-###  为什么推荐 Vite？
+## 方式一：使用 Vite 脚手架
 
 - 启动速度极快（基于 ESM）
 - 热更新（HMR）速度快
@@ -26,18 +24,15 @@
 ###  详细步骤
 
 ```bash
-# 使用 pnpm（推荐，速度快、节省磁盘空间）
+# 1.
 pnpm create vite@latest my-vue3-app -- --template vue
 # pnpm create vite 会临时下载并运行 create-vite 工具，所以不用下载vite，用完即删，不占用全局空间
-
-# 进入项目并安装依赖
+# 2.
 cd my-vue3-app
 pnpm install  # 安装 package.json 中定义的所有依赖，包括vue核心库
-
-# 启动开发服务器
-pnpm run dev  # 启动开发服务器
-
-# 构建生产版本
+# 3.
+pnpm run dev  
+# 4.
 pnpm run build  # 打包生产版本到 dist 目录
 pnpm run preview  # 预览生产构建结果
 ```
@@ -48,7 +43,6 @@ pnpm run preview  # 预览生产构建结果
   "dependencies": {
     "vue": "^3.x.x" // Vue3 核心库
   },
-  // 开发依赖
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.x.x", // Vite 的 Vue 插件，用于处理 .vue 文件
     "vite": "^5.x.x" // Vite 构建工具
@@ -117,14 +111,32 @@ npm run build  # 打包生产版本
 }
 ```
 ---
+## 方式三： 使用create-vue脚手架
 
-## 方式三：纯手动创建（Vite 版本）
+- 基于 Vite 构建，启动速度快
+- 支持 Vue3 单文件组件（.vue 文件）
+  - Vite + @vitejs/plugin-vue
+  - Webpack + vue-loader
+  - Vue CLI （内部使用 Webpack + vue-loader）
+- 自动配置 Vite 插件，无需手动配置
+- 提供默认的目录结构和配置文件
 
-###  适合人群
+### 详细步骤
 
-- 想深入理解项目构建流程
-- 需要完全自定义配置
-- 学习目的
+```bash
+# 1.
+pnpm create vue@latest my-vue3-app
+# 2.
+cd my-vue3-app
+pnpm install  # 安装 package.json 中定义的所有依赖，包括vue核心库
+# 3.
+pnpm run dev  
+# 4.
+pnpm run build  
+pnpm run preview  
+```
+---
+## 方式四：纯手动创建（Vite 版本）
 
 ###  详细步骤
 
@@ -136,7 +148,6 @@ cd my-manual-vite-vue3
 
 # 初始化 package.json
 pnpm init
-# 或者手动创建 package.json
 
 # 步骤 2：安装核心依赖
 # 安装 Vue3 核心库（生产依赖）
@@ -161,7 +172,6 @@ touch src/App.vue
 touch src/components/HelloWorld.vue
 ```
 #### 步骤 4：配置 package.json
-创建或编辑 `package.json`：
 
 ```json
 {
@@ -177,19 +187,11 @@ touch src/components/HelloWorld.vue
     "vue": "^3.4.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.0",
-    "vite": "^5.0.0"
+    "@vitejs/plugin-vue": "^5.0.0", 
+    "vite": "^5.0.0" 
   }
 }
 ```
-
-配置项说明：
-
-- `type: "module"`：告诉 Node.js 使用 ES 模块系统（import/export）
-- `scripts`：定义可执行的命令脚本
-  - `dev`：运行 `vite` 命令启动开发服务器
-  - `build`：运行 `vite build` 打包生产代码
-  - `preview`：预览打包后的生产版本
 
 #### 步骤 5：创建 vite.config.js
 
@@ -218,17 +220,6 @@ export default defineConfig({
     assetsDir: "assets", // 静态资源目录
     sourcemap: false, // 是否生成 source map（调试用）
     minify: "terser", // 压缩方式：'terser' | 'esbuild'
-
-    // Rollup 配置选项
-    rollupOptions: {
-      output: {
-        // 分包策略：将第三方库单独打包
-        manualChunks: {
-          "vue-vendor": ["vue"], // 将 vue 单独打包
-        },
-      },
-    },
-  },
 
   // 路径别名配置
   resolve: {
@@ -277,16 +268,16 @@ pnpm init
 # 安装 Vue3（生产依赖）
 pnpm add vue
 
-# 安装 Webpack 相关（开发依赖）
+# 安装 Webpack相关
 pnpm add webpack webpack-cli webpack-dev-server --save-dev
 
-# 安装 Vue 加载器和编译器（开发依赖）
+# 安装 Vue 加载器/编译器（开发依赖）
 pnpm add vue-loader @vue/compiler-sfc --save-dev
 
 # 安装 HTML 插件（自动生成 HTML）
 pnpm add html-webpack-plugin --save-dev
 
-# 安装 CSS 加载器
+# 安装 CSS 加载器/样式加载器（开发依赖）
 pnpm add css-loader vue-style-loader --save-dev
 
 # 安装 Babel（转译 ES6+ 代码）
@@ -344,6 +335,7 @@ pnpm add @babel/core @babel/preset-env babel-loader --save-dev
 const path = require("path"); // Node.js 路径模块
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // HTML 插件
 const { VueLoaderPlugin } = require("vue-loader"); // Vue 加载器插件
+
 
 module.exports = {
   // 入口文件：Webpack 从这里开始打包
@@ -423,47 +415,7 @@ module.exports = {
   devtool: "eval-source-map", // 开发环境使用，生产环境改为 'source-map' 或 false
 };
 ```
-
-**Webpack 配置详解：**
-
-##### entry（入口）
-
-- 指定 Webpack 开始打包的入口文件
-- 可以是字符串、数组或对象
-
-##### output（输出）
-
-- `path`：输出目录的绝对路径
-- `filename`：输出文件名，`[contenthash]` 是内容哈希值，文件内容变化时哈希值变化
-- `clean`：构建前清空输出目录
-
-##### module.rules（模块规则）
-
-- `test`：正则表达式，匹配文件
-- `loader`：使用的加载器
-- `use`：加载器数组，从右到左执行
-- `exclude`：排除的目录
-
-##### plugins（插件）
-
-- `VueLoaderPlugin`：必需，配合 vue-loader 使用
-- `HtmlWebpackPlugin`：自动生成 HTML 文件
-
-##### devServer（开发服务器）
-
-- `hot`：热模块替换，修改代码后自动刷新
-- `historyApiFallback`：支持 HTML5 History API 路由
-
-##### resolve（解析）
-
-- `extensions`：自动解析的文件扩展名
-- `alias`：路径别名
-
-##### devtool（开发工具）
-
-- `eval-source-map`：开发环境，快速重建
-- `source-map`：生产环境，完整的 source map
-
+---
 #### 步骤 5：创建项目文件
 
 创建目录结构：
@@ -500,11 +452,9 @@ createApp(App).mount("#app");
 
 ## 配置文件详解
 
-### 常用配置项对比
+ Vite 配置项
 
-#### Vite 配置项
-
-```javascript
+```js
 {
   plugins: [],        // 插件
   server: {},         // 开发服务器
@@ -515,9 +465,9 @@ createApp(App).mount("#app");
 }
 ```
 
-#### Webpack 配置项
+Webpack 配置项
 
-```javascript
+```js
 {
   entry: '',          // 入口
   output: {},         // 输出

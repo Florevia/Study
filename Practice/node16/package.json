@@ -1,0 +1,28 @@
+{
+  "name": "node16",
+  "version": "1.2.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "csstype": "^3.2.3",
+    "entities": "^4.5.0",
+    "estree-walker": "^2.0.2",
+    "fsevents": "^2.3.3",
+    "esbuild": "^0.18.20",
+    "picocolors": "^1.1.1",
+    "magic-string": "^0.30.21",
+    "nanoid": "^3.3.11",
+    "source-map-js": "^1.2.1",
+    "postcss": "^8.5.6",
+    "rollup": "^3.29.5",
+    "vue": "^3.5.25",
+    "vite": "^4.4.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lilin <lilin@lilin.com> (https://github.com/lilin)",
+  "license": "MIT"
+}
