@@ -1,16 +1,19 @@
 # Shell
 
 ## shell
+
 1. 一名解释型编程语言
 2. 解释器：sh、zsh、bash
 3. 两种命令：
-- 内建命令（built-in）：命令实现在 shell 程序内部，执行时不创建新进程，直接在当前 shell 里运行。
-例：cd、exit、export、alias、fg/bg/jobs、ulimit、read、source 
-- 外部命令（external）：是文件系统里的可执行文件，shell 通过 PATH 找到后用 fork/exec 启动为新进程。
-例：ls、cat、grep、ps、curl、sed、awk 等
-4. PATH变量：环境变量，告诉shell到那些目录里按顺序去寻找外部命令。用冒号分隔的一串目录。
 
-## shell命令
+- 内建命令（built-in）：命令实现在 shell 程序内部，执行时不创建新进程，直接在当前 shell 里运行。
+  例：cd、exit、export、alias、fg/bg/jobs、ulimit、read、source
+- 外部命令（external）：是文件系统里的可执行文件，shell 通过 PATH 找到后用 fork/exec 启动为新进程。
+  例：ls、cat、grep、ps、curl、sed、awk 等
+
+4. PATH 变量：环境变量，告诉 shell 到那些目录里按顺序去寻找外部命令。用冒号分隔的一串目录。
+
+## shell 命令
 
 ### pwd （Print Work Directory）
 
@@ -89,9 +92,35 @@ echo "llll" >> <文件>
 
 ---
 
+## 查看文件内容
+
 ### cat （concatenate）
 
 查看文件内容
+
+### less
+
+分页查看文件内容
+
+### more
+
+分页查看文件内容
+
+### head -n
+
+查看文件前几行
+
+### tail
+
+查看文件后几行
+
+### vim
+
+编辑文件，也能查看文件内容
+
+### mkdir -p a/b/c/d
+
+创建多级文件夹
 
 ```sh
 cat ../demo.md
@@ -127,9 +156,9 @@ echo "llllllll" | cat > in.doc
 
 ### chmod u+x <文件名>
 
-给user添加可执行权限
+给 user 添加可执行权限
 
-### su 
+### su
 
 切换用户
 
@@ -137,7 +166,7 @@ echo "llllllll" | cat > in.doc
 
 以管理员权限执行命令
 
-### id 
+### id
 
 查看用户信息
 
@@ -145,7 +174,7 @@ echo "llllllll" | cat > in.doc
 
 查看占用端口号的进程
 
-### vim 
+### vim
 
 编辑文件
 
@@ -166,9 +195,10 @@ curl -X GET http://localhost:8297
 # 或者
 curl --request GET http://localhost:8297
 ```
+
 ## 环境变量
 
-### export 
+### export
 
 导出环境变量
 
@@ -195,22 +225,17 @@ unset name
 
 ### env
 
-查看所有环境变量
+查看环境变量
 
-### JavaScript 引擎
+### grep（Global Regular Expression Print）
 
--	V8（Chrome、Node.js、Deno）
--	SpiderMonkey（Firefox）
--	JavaScriptCore / Nitro（Safari）
+在文件或输入中搜索匹配的文本行。
 
-### 计算机系统
+**常用选项**
 
-硬件+软件
-
-1. 软件：系统软件（操作系统、编译器等）+ 应用软件
-2. 硬件：
-   - 运算器 
-   - 控制器
-   - 存储器
-   - 输入设备
-   - 输出设备：
+```md
+| `-n` | 显示行号以及具体内容 | `grep -n "TODO" src/*.js` |
+| `-c` | 只显示匹配行数 | `grep -c "error" log.txt` |
+| `-A n` | 显示匹配行及后 n 行 | `grep -A 3 "error" log.txt` |
+| `-B n` | 显示匹配行及前 n 行 | `grep -B 3 "error" log.txt` |
+```

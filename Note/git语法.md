@@ -13,7 +13,9 @@ git 仓库就是放代码的地方
 初始化/创建一个本地仓库
 
 ## git add
+
 提交到暂存区
+
 ```sh
 # 提交全部文件
 git add filename
@@ -134,16 +136,15 @@ git clone <repo-url>
 
 将远程更新 线性对齐主干（线性）
 
-- 例：将A变基到B：
- git switch A --> git A rebase B
+- 例：将 A 变基到 B：
+  git switch A --> git A rebase B
 
 ## git merge origin/main
 
 将远程更新 合并 （有分支）
 
-- 例： 把B合并到A：
- git switch A --> git A merge B
- 
+- 例： 把 B 合并到 A：
+  git switch A --> git A merge B
 
 ```sh
 # 同步远程信息（不动工作区）
@@ -174,7 +175,15 @@ git rebase origin/main
 恢复到之前的版本
 
 ## 删除单个文件
+
 git rm --cached 文件名
 
 ## 删除整个目录
+
 git rm -r --cached 目录名/
+
+## git commit --amend
+
+修改上一次提交
+
+##

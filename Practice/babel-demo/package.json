@@ -1,0 +1,27 @@
+{
+  "name": "babel-demo",
+  "version": "1.0.0",
+  "description": "Babel 转译示例项目",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel src -d dist",
+    "build:watch": "babel src -d dist --watch"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/plugin-transform-arrow-functions": "^7.27.1",
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-classes": "^7.28.4",
+    "@babel/plugin-transform-destructuring": "^7.28.5",
+    "@babel/plugin-transform-spread": "^7.27.1",
+    "@babel/preset-env": "^7.23.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "core-js": "^3.6.5"
+  },
+  "keywords": [],
+  "author": "lilin <lilin@lilin.com> (https://github.com/lilin)",
+  "license": "MIT"
+}
