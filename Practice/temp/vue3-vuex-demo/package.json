@@ -1,0 +1,23 @@
+{
+  "name": "vue3-vuex-demo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "keywords": [],
+  "author": "lilin <lilin@lilin.com> (https://github.com/lilin)",
+  "license": "MIT",
+  "packageManager": "pnpm@10.26.1",
+  "dependencies": {
+    "@vue/cli": "^5.0.9",
+    "vue": "^3.5.26",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.9"
+  }
+}
