@@ -1,20 +1,8 @@
-// const arr = [1, 1, 2, 2, 3];
+# 树
 
-// const set1 = new Set(arr);
-// console.log(set1); // Set(3) { 1, 2, 3 }
-// // 去重
-// const arr2 = [...new Set(arr)];
-// console.log(arr2);
-// // 判断元素是否在集合中
-// const has = set1.has(4);
-// console.log(has);
-// //求交集
-// const set2 = new Set([2, 3, 4]);
-// const intersection = new Set([...set1].filter((item) => set2.has(item)));
-// console.log(intersection);
+## 树结构
 
-// 树
-// 树结构
+```js
 const tree = {
   name: "A", // 根节点
   children: [
@@ -46,16 +34,25 @@ const tree = {
     },
   ],
 };
+```
 
-// 树的可视化表示：
+### 可视化表示：
+
+```js
 //        A
 //       / \
 //      B   C
 //     / \ / \
 //    D  E F  G
+```
 
-// ===== 深度优先遍历 =====
-// 方法1：递归实现（最常用）
+## 遍历树
+
+### 深度优先遍历
+
+#### 方法 1：递归实现（最常用）
+
+```js
 const dfs = (tree) => {
   if (tree === null) return;
   console.log(tree.name); // 先访问当前节点
@@ -63,8 +60,11 @@ const dfs = (tree) => {
 };
 
 dfs(tree);
+```
 
-// 方法2：迭代实现（使用栈）
+#### 方法 2：迭代实现（使用栈）
+
+```js
 const dfsIterative = (tree) => {
   const stack = [tree]; // 使用数组模拟栈
   while (stack.length > 0) {
@@ -78,9 +78,11 @@ const dfsIterative = (tree) => {
 };
 
 dfsIterative(tree);
+```
 
-// ===== 广度优先遍历 =====
+### 广度优先遍历
 
+```js
 const bfs = (tree) => {
   const queue = [tree]; // 使用数组模拟队列
   while (queue.length > 0) {
@@ -94,8 +96,11 @@ const bfs = (tree) => {
 };
 
 bfs(tree);
+```
 
-// 二叉树
+## 二叉树
+
+```js
 const binaryTree = {
   value: 1,
   left: {
@@ -119,8 +124,13 @@ const binaryTree = {
 };
 
 console.log(binaryTree);
-// ===== 二叉树遍历 (递归版) =====
-// 先序遍历 (Pre-order): 根 -> 左 -> 右
+```
+
+### 二叉树遍历 (递归版)
+
+#### 先序遍历 (Pre-order): 根 -> 左 -> 右
+
+```js
 const preOrder = (tree) => {
   if (!tree) return; // 空节点检查
   console.log(tree.value); // 先访问根节点
@@ -129,8 +139,11 @@ const preOrder = (tree) => {
 };
 
 preOrder(binaryTree);
+```
 
-// 中序遍历 (In-order): 左 -> 根 -> 右
+#### 中序遍历 (In-order): 左 -> 根 -> 右
+
+```js
 const inorder = (tree) => {
   if (!tree) return;
   inorder(tree.left);
@@ -139,8 +152,11 @@ const inorder = (tree) => {
 };
 
 inorder(binaryTree);
+```
 
-// 后序遍历 (Post-order): 左 -> 右 -> 根
+#### 后序遍历 (Post-order): 左 -> 右 -> 根
+
+```js
 const postOrder = (tree) => {
   if (!tree) return;
   postOrder(tree.left);
@@ -149,10 +165,13 @@ const postOrder = (tree) => {
 };
 
 postOrder(binaryTree);
+```
 
-// ===== 二叉树遍历 (非递归版 - 使用栈) =====
+### 二叉树遍历 (非递归版 - 使用栈)
 
-// 先序遍历 (迭代版)
+#### 先序遍历 (迭代版)
+
+```js
 const preOrderIterative = (tree) => {
   if (!tree) return;
   const stack = [tree];
@@ -166,8 +185,11 @@ const preOrderIterative = (tree) => {
   }
 };
 preOrderIterative(binaryTree);
+```
 
-// 中序遍历 (迭代版)
+#### 中序遍历 (迭代版)
+
+```js
 const inorderIterative = (tree) => {
   if (!tree) return;
   const stack = [];
@@ -186,3 +208,54 @@ const inorderIterative = (tree) => {
   }
 };
 inorderIterative(binaryTree);
+```
+
+#### 后序遍历 (迭代版)
+
+```js
+const postOrderIterative = (tree) => {
+  if (!tree) return;
+  const stack = [];
+  let current = tree;
+  let lastVisited = null;
+  while (current || stack.length > 0) {
+    // 先访问左子树
+    while (current) {
+      stack.push(current);
+      current = current.left;
+    }
+    const node = stack[stack.length - 1];
+    // 如果右子树为空或已访问过，则访问当前节点
+    if (!node.right || node.right === lastVisited) {
+      console.log(node.value);
+      lastVisited = node;
+      stack.pop();
+    } else {
+      // 否则访问右子树
+      current = node.right;
+    }
+  }
+};
+postOrderIterative(binaryTree);
+```
+
+### 求二叉树最大深度
+
+```js
+function maxDepthDFS(root) {
+  if (!root) return 0;
+  const stack = [[root, 1]]; // 栈中存储 [节点, 当前深度]
+  let maxDepth = 0;
+  while (stack.length > 0) {
+    const [node, depth] = stack.pop();
+    maxDepth = Math.max(maxDepth, depth); // 更新最大深度
+
+    if (node.right) stack.push([node.right, depth + 1]); // 压入子节点时，深度+1
+    if (node.left) stack.push([node.left, depth + 1]);
+  }
+
+  return maxDepth;
+}
+
+console.log("最大深度:", maxDepthDFS(binaryTree)); // 输出: 3
+```
