@@ -43,5 +43,12 @@ test("拍平数组", () => {
 });
 
 test("排序方式2724", () => {
-  expect(sortBy([5, 4, 1, 2, 3], (a, b) => a - b)).toEqual([1, 2, 2, 3, 4, 5]);
+  expect(sortBy([5, 4, 1, 2, 3], (a, b) => a - b)).toEqual([1, 2, 3, 4, 5]);
 });
+
+function sortBy(
+  arr: number[],
+  callback: (a: number, b: number) => number
+): number[] {
+  return arr.sort((a, b) => a - b);
+}

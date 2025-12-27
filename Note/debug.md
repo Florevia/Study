@@ -1,4 +1,4 @@
-# debug 的三种方法
+`# debug 的三种方法
 
 ## 使用 Chrome 调试 Node.js 程序
 
@@ -15,7 +15,7 @@ node --inspect-brk index.js
 node --inspect index.js
 ```
 
-浏览器访问 `http://localhost:9229` 即可
+浏览器访问`chrome://inspect` `http://localhost:9229` 即可
 
 ## node 环境
 
@@ -27,7 +27,7 @@ node --inspect index.js
 ### 步骤
 
 ```zsh
-node inspect index.js
+
 ```
 
 然后在命令行中执行 next、step、continu、out 等命令
