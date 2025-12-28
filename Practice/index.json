@@ -1,0 +1,32 @@
+{
+    "id": "202512260041177cde0246332241b9",
+    "object": "chat.completion",
+    "created": 1766680886,
+    "model": "ZhipuAI/GLM-4.7",
+    "system_fingerprint": "",
+    "choices": [
+      {
+        "index": 0,
+        "delta": {
+          "role": null,
+          "content": "",
+          "tool_calls": null,
+          "function_calls": null,
+          "reasoning_content": ""
+        },
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "你好！很高兴见到你。我是GLM，一个由Z.ai训练的大语言模型。\n\n有什么我能帮助你的吗？无论是回答问题、提供信息还是进行日常交流，我都很乐意与你对话。",
+          "tool_calls": null,
+          "function_calls": null,
+          "reasoning_content": "收到用户发来的\"你好\"这样简单的问候，需要礼貌地回应并引导对话。首先，我应该以热情友好的态度回应，让用户感受到被重视。接着，可以主动询问用户需要什么帮助，以促进进一步的交流。同时，考虑到用户可能使用中文，回应时也要用中文，保持语言的一致性。另外，要确保回应简洁明了，避免过于复杂的句子，让用户容易理解。最后，检查是否有拼写或语法错误，确保回应的准确性和专业性。"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6,
+      "completion_tokens": 147,
+      "total_tokens": 153
+    }
+  }

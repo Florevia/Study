@@ -1,0 +1,18 @@
+{
+  "name": "RAG",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lilin <lilin@lilin.com> (https://github.com/lilin)",
+  "license": "MIT",
+  "packageManager": "pnpm@10.26.1",
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "chromadb": "^3.2.0",
+    "openai": "^6.15.0"
+  }
+}

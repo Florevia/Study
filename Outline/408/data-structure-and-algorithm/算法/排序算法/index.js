@@ -1,0 +1,28 @@
+/**
+ * 二分查找（Binary Search）
+ * 前提：数组必须是有序的
+ * 时间复杂度：O(log n)
+ * 空间复杂度：O(1)
+ */
+Array.prototype.binarySearch = function (target) {
+  let min = 0;
+  let max = this.length - 1;
+
+  while (min <= max) {
+    // mid 必须在循环内计算，每次范围缩小后重新计算中点
+    const mid = Math.floor((min + max) / 2);
+
+    if (this[mid] === target) {
+      return mid; // 找到目标，返回索引
+    } else if (this[mid] < target) {
+      min = mid + 1; // 目标在右半部分
+    } else {
+      max = mid - 1; // 目标在左半部分
+    }
+  }
+
+  return -1; // 未找到，返回 -1（标准做法）
+};
+
+const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+console.log(arr.binarySearch(10));
