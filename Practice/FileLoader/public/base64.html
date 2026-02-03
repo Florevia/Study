@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌸 Base64编码上传 · Cherry Blossom</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cherry-blossom: #FFB7C5;
+      --cherry-light: #FFE4E9;
+      --text-dark: #6B4E71;
+      --text-soft: #9B7FA8;
+      --shadow-pink: rgba(255, 183, 197, 0.3);
+      --font-display: 'Quicksand', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    body {
+      background: linear-gradient(135deg, #FFF5F7 0%, #FFE4E9 100%);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: radial-gradient(circle at 30% 40%, rgba(255, 183, 197, 0.2) 0%, transparent 50%);
+      animation: float 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .decoration {
+      position: fixed;
+      pointer-events: none;
+      font-size: 30px;
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .decoration:nth-child(1) { top: 15%; left: 10%; }
+    .decoration:nth-child(2) { top: 25%; right: 15%; animation-delay: 1s; }
+    .decoration:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 2s; }
+    .decoration:nth-child(4) { bottom: 30%; right: 10%; animation-delay: 1.5s; }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      color: var(--cherry-blossom);
+      transform: translateX(-5px);
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 35px;
+      padding: 50px;
+      box-shadow: 0 15px 50px var(--shadow-pink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, var(--cherry-light), var(--cherry-blossom));
+      border-radius: 35px;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .icon {
+      font-size: 70px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, var(--cherry-light), white);
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--cherry-blossom);
+    }
+
+    .info-box h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .info-box p {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .features {
+      list-style: none;
+      margin-top: 15px;
+    }
+
+    .features li {
+      color: var(--text-soft);
+      font-size: 13px;
+      padding: 6px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .features li::before {
+      content: '🌸';
+      position: absolute;
+      left: 0;
+      font-size: 14px;
+    }
+
+    .upload-section {
+      margin-bottom: 25px;
+    }
+
+    .upload-label {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: block;
+      font-size: 15px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 16px;
+      background: var(--cherry-light);
+      border: 2px dashed var(--cherry-blossom);
+      border-radius: 18px;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: linear-gradient(135deg, var(--cherry-blossom), var(--cherry-light));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 12px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"]:hover {
+      background: white;
+      box-shadow: 0 5px 20px var(--shadow-pink);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--cherry-blossom), var(--cherry-light));
+      color: white;
+      border: none;
+      border-radius: 18px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px var(--shadow-pink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px var(--shadow-pink);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .progress-wrapper {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      height: 12px;
+      background: var(--cherry-light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cherry-blossom), var(--cherry-light));
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 12px;
+      box-shadow: 0 0 10px var(--shadow-pink);
+      position: relative;
+    }
+
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 18px;
+      font-size: 14px;
+      display: none;
+      border-left: 4px solid;
+    }
+
+    .result.success {
+      background: rgba(176, 239, 168, 0.2);
+      border-color: #B0EFA8;
+      color: #4A7C59;
+    }
+
+    .result.error {
+      background: rgba(255, 183, 197, 0.3);
+      border-color: var(--cherry-blossom);
+      color: #A63F54;
+    }
+
+    .preview-container {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .preview-image {
+      width: 100%;
+      border-radius: 18px;
+      border: 3px solid var(--cherry-light);
+      box-shadow: 0 8px 25px var(--shadow-pink);
+    }
+
+    @media (max-width: 768px) {
+      .main-card {
+        padding: 30px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="decoration">🌸</div>
+  <div class="decoration">💕</div>
+  <div class="decoration">✨</div>
+  <div class="decoration">🌺</div>
+
+  <div class="container">
+    <a href="index.html" class="back-link">
+      ← 返回首页
+    </a>
+
+    <div class="main-card">
+      <div class="header">
+        <div class="icon">🌸</div>
+        <h1>Base64 编码上传</h1>
+        <div class="subtitle">Cherry Blossom · 樱花魔法</div>
+      </div>
+
+      <div class="info-box">
+        <h3>💝 什么是Base64编码？</h3>
+        <p>Base64编码将二进制文件转换为ASCII字符串，就像把文件变成一串魔法咒语！这种方式可以直接嵌入JSON数据中传输。</p>
+        <ul class="features">
+          <li>无需FormData，直接JSON传输</li>
+          <li>适合小文件（建议 &lt;1MB）</li>
+          <li>体积会增加约33%</li>
+          <li>适合头像、图标等小图片</li>
+        </ul>
+      </div>
+
+      <div class="upload-section">
+        <label class="upload-label">选择文件（建议小于1MB）</label>
+        <input type="file" id="base64File" accept="image/*,application/pdf">
+      </div>
+
+      <button class="btn" onclick="uploadBase64()">
+        ✨ 开始编码并上传
+      </button>
+
+      <div class="progress-wrapper" id="base64Progress">
+        <div class="progress-label">
+          <span>编码进度</span>
+          <span id="base64ProgressText">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="base64ProgressBar"></div>
+        </div>
+      </div>
+
+      <div class="result" id="base64Result"></div>
+      <div class="preview-container" id="base64PreviewContainer">
+        <img class="preview-image" id="base64Preview" alt="预览">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function uploadBase64() {
+      const fileInput = document.getElementById('base64File');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showResult('⚠ 请先选择文件！', 'error');
+        return;
+      }
+
+      if (file.size > 1024 * 1024) {
+        showResult('⚠ Base64方式建议文件小于1MB，当前文件: ' + (file.size / 1024 / 1024).toFixed(2) + 'MB', 'error');
+        return;
+      }
+
+      const progressWrapper = document.getElementById('base64Progress');
+      const progressBar = document.getElementById('base64ProgressBar');
+      const progressText = document.getElementById('base64ProgressText');
+
+      progressWrapper.style.display = 'block';
+
+      const reader = new FileReader();
+
+      reader.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const percent = Math.round((e.loaded / e.total) * 100);
+          updateProgressBar(progressBar, progressText, percent);
+        }
+      };
+
+      reader.onload = function(e) {
+        const base64Data = e.target.result;
+
+        fetch('/upload-base64', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            filename: file.name,
+            data: base64Data,
+            size: file.size,
+            type: file.type
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showResult(`✓ ${data.message}<br>文件: ${data.file.originalName}<br>大小: ${(data.file.size / 1024).toFixed(2)} KB<br>编码后增加: ${((base64Data.length - file.size) / file.size * 100).toFixed(1)}%`, 'success');
+
+            if (file.type.startsWith('image/')) {
+              showPreview(data.file.path);
+            }
+          } else {
+            showResult(`✗ ${data.message}`, 'error');
+          }
+          setTimeout(() => {
+            progressWrapper.style.display = 'none';
+            updateProgressBar(progressBar, progressText, 0);
+          }, 1000);
+        })
+        .catch(error => {
+          showResult('✗ 上传失败: ' + error.message, 'error');
+          progressWrapper.style.display = 'none';
+        });
+      };
+
+      reader.onerror = function() {
+        showResult('✗ 文件读取失败', 'error');
+        progressWrapper.style.display = 'none';
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function updateProgressBar(bar, text, percent) {
+      bar.style.width = percent + '%';
+      text.textContent = percent + '%';
+    }
+
+    function showResult(message, type) {
+      const result = document.getElementById('base64Result');
+      result.innerHTML = message;
+      result.className = 'result ' + type;
+      result.style.display = 'block';
+    }
+
+    function showPreview(path) {
+      const container = document.getElementById('base64PreviewContainer');
+      const img = document.getElementById('base64Preview');
+      img.src = path;
+      container.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

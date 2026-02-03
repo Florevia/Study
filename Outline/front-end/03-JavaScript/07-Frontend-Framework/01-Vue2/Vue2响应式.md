@@ -1,121 +1,40 @@
-# vue2响应式
-# 原理&局限性
+# vue2 响应式
+
+## 原理&局限性
 
 - 核心设计模式：观察者模式 (Observer Pattern)
 
 - Vue 的响应式系统本质上是观察者模式的一种实现。整个系统主要由三个核心角色构成：
 
-  - Observer (观察者/数据劫持者): 负责拦截数据的读写操作。
-  - Dep (Dependency/依赖管理器): 负责维护依赖列表（即“谁依赖了这个数据”）。
-  - Watcher (订阅者): 负责在数据变化时执行具体的更新逻辑（如组件渲染函数）。
+  - **Observer (观察者/数据劫持者)**: 负责拦截数据的读写操作。
+  - **Dep (Dependency/依赖管理器)**: 负责维护依赖列表（即“谁依赖了这个数据”）。
+  - **Watcher (订阅者)**: 负责在数据变化时执行具体的更新逻辑（如组件渲染函数）。
 
-- 核心机制： 
+- 核心机制：
 
-  - 数据劫持 (Data Interception)
-  - 依赖收集 (Dependency Collection) —— Getter 阶段
-  - 派发更新 (Change Notification) —— Setter 阶段
-  - 异步更新队列 (Asynchronous Update Queue)
+  - **数据劫持 (Data Interception)**
+  - **依赖收集 (Dependency Collection)** —— Getter 阶段
+  - **派发更新 (Change Notification)** —— Setter 阶段
+  - **异步更新队列 (Asynchronous Update Queue)**
 
-## 数据劫持 
+## 数据劫持
 
-- 使用 Object.defineProperty
-- Vue 在初始化（Initialization）阶段，会遍历 data 选项中的所有属性，并将其转换为 Getter/Setter 【访问器属性（Accessor Properties）】。
-- 局限性: 只能拦截属性的读写，无法拦截对象的添加/删除（需用 Vue.set）和数组的索引操作。
+- vue2 在初始化（Initialization）阶段，会使用 `Object.defineProperty` 遍历 `data` 选项中的所有属性，并将其转换为 `Getter/Setter` (访问器属性)。
 
-```js
-// 模拟 Vue 2 的响应式原理
+  - 无法检测对象属性的添加或删除：Object.defineProperty 只能劫持初始化时存在的属性。
+  - 解决方案：Vue.set / Vue.delete
 
-/**
- * 1. Observer 类: 
- * 它的作用是把一个普通对象的所有属性都“转化”为 getter/setter。
- */
-class Observer {
-  constructor(value) {
-    this.value = value;
-    this.walk(value); // 开始遍历
-  }
+  - 数组下标修改无法检测，重写了 push, pop, splice 等 7 个数组变异方法来实现响应式。
 
-  // 遍历对象所有的属性
-  walk(obj) {
-    const keys = Object.keys(obj);
-    for (let i = 0; i < keys.length; i++) {
-      defineReactive(obj, keys[i]); // 核心转换逻辑
-    }
-  }
-}
+- vue3 在初始化时，直接使用 `Proxy` 代理整个对象。
 
-/**
- * 2. defineReactive: 
- * 真正的“拦截”发生在这里。利用 Object.defineProperty 重写属性。
- */
-function defineReactive(obj, key, val) {
-  // 如果没传值，就获取当前对象的属性值
-  if (arguments.length === 2) {
-    val = obj[key];
-  }
+  - 全方位拦截：Proxy 可以拦截 13 种对象操作，包括属性读取、赋值、delete、in 操作符、Object.keys 等。这意味着属性的新增和删除也能被自动监听到，不再需要 Vue.set。
 
-  // 递归：如果属性值本身也是对象（比如 data: { user: { name: '...' } }）
-  // 就需要继续 new Observer(val)，实现深度监测
-  observe(val);
+  - 懒处理（Lazy）：Vue 2 是初始化时全量递归；Vue 3 是只有访问到某个嵌套属性时，才会对该属性进行下一层的 reactive 转换。这大大提升了初始化性能。
 
-  // 每个属性都闭包维护一个 Dep (依赖列表)
-  const dep = new Dep();
+  - 支持数组：Proxy 可以直接监听数组索引的变化和长度的变化。
 
-  Object.defineProperty(obj, key, {
-    enumerable: true,
-    configurable: true,
-    
-    // Getter: 别人来读取这个属性时触发
-    get: function reactiveGetter() {
-      console.log(`[Getter] 拦截读取: ${key} = ${val}`);
-      // 依赖收集：如果当前有 Watcher 在读取（比如正在渲染页面），就把它记下来
-      if (Dep.target) {
-        dep.depend();
-      }
-      return val;
-    },
-
-    // Setter: 别人来修改这个属性时触发
-    set: function reactiveSetter(newVal) {
-      if (newVal === val) return;
-      console.log(`[Setter] 拦截修改: ${key} 从 ${val} -> ${newVal}`);
-      
-      val = newVal;
-      // 如果新值是个对象，也要把它变成响应式的
-      observe(newVal);
-      
-      // 派发更新：通知所有记下来的 Watcher 去更新
-      dep.notify();
-    }
-  });
-}
-
-// 辅助函数
-function observe(value) {
-  if (!value || typeof value !== 'object') return;
-  return new Observer(value);
-}
-
-// --- 简单的依赖管理器 (Dep) ---
-class Dep {
-  constructor() {
-    this.subs = [];
-  }
-  depend() {
-    if (Dep.target) {
-      this.subs.push(Dep.target);
-    }
-  }
-  notify() {
-    console.log(`[Dep] 通知 ${this.subs.length} 个观察者更新`);
-    this.subs.forEach(sub => sub.update());
-  }
-}
-// 全局变量，用来记录当前正在工作的 Watcher
-Dep.target = null;
-```
-
-## 依赖收集 
+## 依赖收集
 
 Dep (Dependency) 和 Watcher (观察者)
 
@@ -125,7 +44,7 @@ Dep (Dependency) 和 Watcher (观察者)
 - Dep.target: 此时，全局变量 Dep.target 指向当前正在执行的 Watcher（通常是组件的 Render Watcher）。
 - 收集依赖: 属性的 Getter 将当前的 Watcher 添加到自己的 Dep（依赖列表）中。
 
-## 派发更新 
+## 派发更新
 
 notify (通知) 和 re-render (重新渲染)
 
@@ -139,22 +58,21 @@ notify (通知) 和 re-render (重新渲染)
 
 Vue 的响应式更新是异步的。
 
-## 局限性
+## 工作流
 
-依赖Object.defineProperty 劫持属性
-
-- 不能监听 属性新增 / 删除：
-- 需要 Vue.set / Vue.delete
-- 对数组的变更监听是通过重写数组方法（push/splice 等）
-- 对于深层嵌套对象，初始化时要做深度遍历，性能有一定损耗
-
-## Vue3 响应式的改进（Proxy）
-
-Vue3 使用 Proxy
-
-- 可以监听 属性的新增、删除、in 操作、for...in 遍历 等。
-- 更适合处理 深层嵌套对象，在访问时按需追踪，性能更好。
-- 实现上抽象出 reactive()、ref()、readonly() 等工具，响应式能力更灵活：
-  - reactive: 处理对象、数组
-  - ref: 处理基本类型 & 单值响应式
-  - computed: 派生状态，更加规范
+初始化 (Init)
+Vue 创建一个 Render Watcher 用于渲染该组件。
+开启“依赖收集模式”（设置全局变量 Dep.target = currentWatcher）。
+首次渲染 (Mount)
+组件执行 render 函数。
+代码读取了 this.message。
+触发 message 的 Getter。
+message 的 Dep 发现此时 Dep.target 有值，便把这个 Watcher 收集进去。
+数据更新 (Update)
+用户执行 this.message = 'New Value'。
+触发 message 的 Setter。
+message 的 Dep 遍历内部列表，通知刚才收集的 Render Watcher。
+重新渲染 (Patch)
+Watcher 收到通知，调用 update 方法。
+组件重新执行 render 函数，生成新的 Virtual DOM。
+利用 Diff 算法更新真实 DOM。

@@ -1,0 +1,16 @@
+{
+  "name": "file-upload-tutorial",
+  "version": "1.0.0",
+  "description": "简单的文件上传教程 - 包含三种实现方式",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["file-upload", "express", "multer", "tutorial"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

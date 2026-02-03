@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌿 传统表单上传 · Mint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mint: #B0EFA8;
+      --mint-light: #D4F5D0;
+      --text-dark: #6B4E71;
+      --text-soft: #9B7FA8;
+      --shadow-mint: rgba(176, 239, 168, 0.3);
+      --font-display: 'Quicksand', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(3deg); }
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    body {
+      background: linear-gradient(135deg, #F5FFF5 0%, #E8F5E9 100%);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: radial-gradient(circle at 30% 40%, rgba(176, 239, 168, 0.2) 0%, transparent 50%);
+      animation: float 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .decoration {
+      position: fixed;
+      pointer-events: none;
+      font-size: 30px;
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .decoration:nth-child(1) { top: 15%; left: 10%; }
+    .decoration:nth-child(2) { top: 25%; right: 15%; animation-delay: 1s; }
+    .decoration:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 2s; }
+    .decoration:nth-child(4) { bottom: 30%; right: 10%; animation-delay: 1.5s; }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      color: var(--mint);
+      transform: translateX(-5px);
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 35px;
+      padding: 50px;
+      box-shadow: 0 15px 50px var(--shadow-mint);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, var(--mint-light), var(--mint));
+      border-radius: 35px;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .icon {
+      font-size: 70px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, var(--mint-light), white);
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--mint);
+    }
+
+    .info-box h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .info-box p {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .features {
+      list-style: none;
+      margin-top: 15px;
+    }
+
+    .features li {
+      color: var(--text-soft);
+      font-size: 13px;
+      padding: 6px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .features li::before {
+      content: '🌿';
+      position: absolute;
+      left: 0;
+      font-size: 14px;
+    }
+
+    .upload-section {
+      margin-bottom: 25px;
+    }
+
+    .upload-label {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: block;
+      font-size: 15px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 16px;
+      background: var(--mint-light);
+      border: 2px dashed var(--mint);
+      border-radius: 18px;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: linear-gradient(135deg, var(--mint), var(--mint-light));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 12px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"]:hover {
+      background: white;
+      box-shadow: 0 5px 20px var(--shadow-mint);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--mint), var(--mint-light));
+      color: white;
+      border: none;
+      border-radius: 18px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px var(--shadow-mint);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px var(--shadow-mint);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .note {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(176, 239, 168, 0.1);
+      border-radius: 15px;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+      border-left: 3px solid var(--mint);
+    }
+
+    .note strong {
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .main-card {
+        padding: 30px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="decoration">🌿</div>
+  <div class="decoration">💚</div>
+  <div class="decoration">✨</div>
+  <div class="decoration">🍃</div>
+
+  <div class="container">
+    <a href="index.html" class="back-link">
+      ← 返回首页
+    </a>
+
+    <div class="main-card">
+      <div class="header">
+        <div class="icon">🌿</div>
+        <h1>传统表单上传</h1>
+        <div class="subtitle">Mint · 薄荷魔法</div>
+      </div>
+
+      <div class="info-box">
+        <h3>💝 什么是传统表单上传？</h3>
+        <p>使用HTML原生表单的multipart/form-data编码提交，就像薄荷般清新自然！零JavaScript依赖，浏览器原生支持。</p>
+        <ul class="features">
+          <li>零JavaScript依赖</li>
+          <li>浏览器原生支持</li>
+          <li>实现最简单</li>
+          <li>兼容所有浏览器</li>
+        </ul>
+      </div>
+
+      <form action="/upload-form" method="POST" enctype="multipart/form-data">
+        <div class="upload-section">
+          <label class="upload-label">选择文件</label>
+          <input type="file" name="file" required>
+        </div>
+
+        <button type="submit" class="btn">
+          🌿 开始上传
+        </button>
+      </form>
+
+      <div class="note">
+        <strong>📝 注意:</strong> 传统表单提交会刷新页面。上传成功后，服务器会返回一个新页面显示上传结果。如果您需要无刷新的上传体验，请使用Ajax异步上传方式。
+      </div>
+    </div>
+  </div>
+</body>
+</html>

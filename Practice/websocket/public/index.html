@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket 协作编辑器</title>
+
+  <!-- 引入 Quill 编辑器的样式 -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .status-indicator.disconnected {
+      background: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-badge {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    .online-users {
+      background: #f8fafc;
+      padding: 16px 32px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .online-users-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .users-list {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: white;
+      border-radius: 16px;
+      font-size: 13px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    .user-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-chip-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .editor-wrapper {
+      position: relative;
+    }
+
+    /* Quill 编辑器样式定制 */
+    #editor {
+      height: 500px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .ql-toolbar {
+      background: #f8fafc;
+      border: none !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    .ql-container {
+      border: none !important;
+      font-family: inherit;
+    }
+
+    /* 远程光标样式 */
+    .remote-cursor {
+      position: absolute;
+      width: 2px;
+      background-color: currentColor;
+      pointer-events: none;
+      z-index: 1000;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .remote-cursor-label {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      font-size: 11px;
+      color: white;
+      background-color: currentColor;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    /* 远程选区样式 */
+    .remote-selection {
+      position: absolute;
+      background-color: currentColor;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .footer {
+      padding: 16px 32px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <div class="header">
+      <h1>
+        <span class="status-indicator" id="statusIndicator"></span>
+        WebSocket 协作编辑器
+      </h1>
+      <div class="user-info">
+        <div class="user-badge">
+          <span class="user-color" id="userColor"></span>
+          <span id="userName">连接中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 在线用户列表 -->
+    <div class="online-users">
+      <div class="online-users-title">在线用户 (<span id="onlineCount">0</span>)</div>
+      <div class="users-list" id="usersList"></div>
+    </div>
+
+    <!-- 编辑器区域 -->
+    <div class="editor-wrapper">
+      <div id="editor"></div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer">
+      <div class="connection-status">
+        <span>WebSocket 状态:</span>
+        <strong id="connectionStatus">连接中...</strong>
+      </div>
+      <div class="tips">
+        提示：多个浏览器窗口可同时编辑，实时同步
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入 Quill 编辑器 -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+  <!-- 客户端脚本 -->
+  <script src="app.js"></script>
+</body>
+</html>

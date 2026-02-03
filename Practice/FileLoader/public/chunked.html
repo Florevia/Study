@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦋 分片上传 · Lavender</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lavender: #D4BBF7;
+      --lavender-light: #E6D5F5;
+      --text-dark: #6B4E71;
+      --text-soft: #9B7FA8;
+      --shadow-purple: rgba(212, 187, 247, 0.3);
+      --font-display: 'Quicksand', sans-serif;
+      --font-body: 'Nunito', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+
+    body {
+      background: linear-gradient(135deg, #F0E6F6 0%, #E6D5F5 100%);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: radial-gradient(circle at 30% 40%, rgba(212, 187, 247, 0.2) 0%, transparent 50%);
+      animation: float 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .decoration {
+      position: fixed;
+      pointer-events: none;
+      font-size: 30px;
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .decoration:nth-child(1) { top: 15%; left: 10%; }
+    .decoration:nth-child(2) { top: 25%; right: 15%; animation-delay: 1s; }
+    .decoration:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 2s; }
+    .decoration:nth-child(4) { bottom: 30%; right: 10%; animation-delay: 1.5s; }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 30px;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      color: var(--lavender);
+      transform: translateX(-5px);
+    }
+
+    .main-card {
+      background: white;
+      border-radius: 35px;
+      padding: 50px;
+      box-shadow: 0 15px 50px var(--shadow-purple);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(135deg, var(--lavender-light), var(--lavender));
+      border-radius: 35px;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .icon {
+      font-size: 70px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-soft);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, var(--lavender-light), white);
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--lavender);
+    }
+
+    .info-box h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .info-box p {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .features {
+      list-style: none;
+      margin-top: 15px;
+    }
+
+    .features li {
+      color: var(--text-soft);
+      font-size: 13px;
+      padding: 6px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .features li::before {
+      content: '🦋';
+      position: absolute;
+      left: 0;
+      font-size: 14px;
+    }
+
+    .upload-section {
+      margin-bottom: 25px;
+    }
+
+    .upload-label {
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: block;
+      font-size: 15px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 16px;
+      background: var(--lavender-light);
+      border: 2px dashed var(--lavender);
+      border-radius: 18px;
+      color: var(--text-dark);
+      font-family: var(--font-body);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: linear-gradient(135deg, var(--lavender), var(--lavender-light));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 12px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="file"]:hover {
+      background: white;
+      box-shadow: 0 5px 20px var(--shadow-purple);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--lavender), var(--lavender-light));
+      color: white;
+      border: none;
+      border-radius: 18px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px var(--shadow-purple);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px var(--shadow-purple);
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .chunk-progress {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .chunk-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    .chunk-bar-container {
+      height: 8px;
+      background: var(--lavender-light);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .chunk-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--lavender), var(--lavender-light));
+      width: 0%;
+      transition: width 0.3s;
+      border-radius: 8px;
+      box-shadow: 0 0 8px var(--shadow-purple);
+    }
+
+    .progress-wrapper {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      height: 12px;
+      background: var(--lavender-light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--lavender), var(--lavender-light));
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 12px;
+      box-shadow: 0 0 10px var(--shadow-purple);
+      position: relative;
+    }
+
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 18px;
+      font-size: 14px;
+      display: none;
+      border-left: 4px solid;
+    }
+
+    .result.success {
+      background: rgba(176, 239, 168, 0.2);
+      border-color: #B0EFA8;
+      color: #4A7C59;
+    }
+
+    .result.error {
+      background: rgba(212, 187, 247, 0.3);
+      border-color: var(--lavender);
+      color: #6B4E71;
+    }
+
+    .preview-container {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .preview-image {
+      width: 100%;
+      border-radius: 18px;
+      border: 3px solid var(--lavender-light);
+      box-shadow: 0 8px 25px var(--shadow-purple);
+    }
+
+    @media (max-width: 768px) {
+      .main-card {
+        padding: 30px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="decoration">🦋</div>
+  <div class="decoration">💜</div>
+  <div class="decoration">✨</div>
+  <div class="decoration">🌙</div>
+
+  <div class="container">
+    <a href="index.html" class="back-link">
+      ← 返回首页
+    </a>
+
+    <div class="main-card">
+      <div class="header">
+        <div class="icon">🦋</div>
+        <h1>分片上传</h1>
+        <div class="subtitle">Lavender · 薰衣草魔法</div>
+      </div>
+
+      <div class="info-box">
+        <h3>💝 什么是分片上传？</h3>
+        <p>分片上传将大文件切成小块，像蝴蝶一样优雅地逐个上传。支持断点续传，适合视频、压缩包等大文件！</p>
+        <ul class="features">
+          <li>支持超大文件（>100MB）</li>
+          <li>网络中断可继续上传</li>
+          <li>实时显示分片进度</li>
+          <li>服务器自动合并分片</li>
+        </ul>
+      </div>
+
+      <div class="upload-section">
+        <label class="upload-label">选择文件（支持任意大小）</label>
+        <input type="file" id="chunkedFile">
+      </div>
+
+      <button class="btn" onclick="uploadChunked()">
+        🦋 开始分片上传
+      </button>
+
+      <div class="chunk-progress" id="chunkProgress">
+        <div class="chunk-info">
+          <span>当前分片: <span id="currentChunk">0</span>/<span id="totalChunks">0</span></span>
+          <span id="chunkPercent">0%</span>
+        </div>
+        <div class="chunk-bar-container">
+          <div class="chunk-bar" id="chunkBar"></div>
+        </div>
+      </div>
+
+      <div class="progress-wrapper" id="chunkedProgress">
+        <div class="progress-label">
+          <span>总进度</span>
+          <span id="chunkedProgressText">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="chunkedProgressBar"></div>
+        </div>
+      </div>
+
+      <div class="result" id="chunkedResult"></div>
+      <div class="preview-container" id="chunkedPreviewContainer">
+        <img class="preview-image" id="chunkedPreview" alt="预览">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function uploadChunked() {
+      const fileInput = document.getElementById('chunkedFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showResult('⚠ 请先选择文件', 'error');
+        return;
+      }
+
+      const chunkSize = 1024 * 1024; // 1MB per chunk
+      const totalChunks = Math.ceil(file.size / chunkSize);
+      const fileId = Date.now() + '-' + file.name;
+
+      document.getElementById('totalChunks').textContent = totalChunks;
+      document.getElementById('chunkProgress').style.display = 'block';
+      document.getElementById('chunkedProgress').style.display = 'block';
+
+      let currentChunk = 0;
+
+      function uploadNextChunk() {
+        if (currentChunk >= totalChunks) {
+          mergeChunks(fileId, file.name, totalChunks);
+          return;
+        }
+
+        const start = currentChunk * chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
+        const chunk = file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('chunk', chunk);
+        formData.append('chunkIndex', currentChunk);
+        formData.append('totalChunks', totalChunks);
+        formData.append('fileId', fileId);
+        formData.append('filename', file.name);
+
+        fetch('/upload-chunk', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            currentChunk++;
+            document.getElementById('currentChunk').textContent = currentChunk;
+
+            const chunkPercent = Math.round((currentChunk / totalChunks) * 100);
+            document.getElementById('chunkPercent').textContent = chunkPercent + '%';
+            document.getElementById('chunkBar').style.width = chunkPercent + '%';
+
+            const overallPercent = Math.round((currentChunk / totalChunks) * 100);
+            updateProgressBar(
+              document.getElementById('chunkedProgressBar'),
+              document.getElementById('chunkedProgressText'),
+              overallPercent
+            );
+
+            uploadNextChunk();
+          } else {
+            showResult('✗ 分片上传失败', 'error');
+          }
+        })
+        .catch(error => {
+          showResult('✗ 上传错误: ' + error.message, 'error');
+        });
+      }
+
+      uploadNextChunk();
+    }
+
+    function mergeChunks(fileId, filename, totalChunks) {
+      fetch('/merge-chunks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fileId: fileId,
+          filename: filename,
+          totalChunks: totalChunks
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showResult(`✓ ${data.message}<br>文件: ${data.file.originalName}<br>分片数: ${totalChunks}<br>大小: ${(data.file.size / 1024 / 1024).toFixed(2)} MB`, 'success');
+
+          if (filename.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+            showPreview(data.file.path);
+          }
+
+          setTimeout(() => {
+            document.getElementById('chunkProgress').style.display = 'none';
+            document.getElementById('chunkedProgress').style.display = 'none';
+            document.getElementById('currentChunk').textContent = '0';
+            document.getElementById('chunkBar').style.width = '0%';
+            updateProgressBar(
+              document.getElementById('chunkedProgressBar'),
+              document.getElementById('chunkedProgressText'),
+              0
+            );
+          }, 3000);
+        } else {
+          showResult('✗ 文件合并失败', 'error');
+        }
+      })
+      .catch(error => {
+        showResult('✗ 合并错误: ' + error.message, 'error');
+      });
+    }
+
+    function updateProgressBar(bar, text, percent) {
+      bar.style.width = percent + '%';
+      text.textContent = percent + '%';
+    }
+
+    function showResult(message, type) {
+      const result = document.getElementById('chunkedResult');
+      result.innerHTML = message;
+      result.className = 'result ' + type;
+      result.style.display = 'block';
+    }
+
+    function showPreview(path) {
+      const container = document.getElementById('chunkedPreviewContainer');
+      const img = document.getElementById('chunkedPreview');
+      img.src = path;
+      container.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

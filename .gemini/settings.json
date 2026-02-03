@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "livesteam": {
+            "command": "node",
+            "args": ["/Users/lilin/Code/Study/mcp/mcpservers.js"]
+        },
+        "context7": {
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp", "--api-key", "ctx7sk-14fa85f9-eb94-4345-aa7c-7c45802e8031"]
+          }
+    }
+}

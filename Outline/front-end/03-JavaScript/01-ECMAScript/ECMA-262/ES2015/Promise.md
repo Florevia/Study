@@ -135,143 +135,27 @@ flowchart TD
 
 ## Promise 静态方法
 
-### Promise.resolve(value)
-
-将值转换为 fulfilled 的 Promise。
-
-```js
-// 普通值
-Promise.resolve(42); // Promise {fulfilled: 42}
-
-// 已是 Promise，直接返回
-const p = Promise.resolve(1);
-Promise.resolve(p) === p; // true
-
-// thenable 对象
-const thenable = {
-  then(resolve) {
-    resolve("thenable result");
-  },
-};
-Promise.resolve(thenable).then(console.log); // 'thenable result'
-```
-
-### Promise.reject(reason)
-
-创建一个 rejected 的 Promise。
-
-```js
-Promise.reject(new Error("失败")).catch((e) => console.log(e.message)); // '失败'
-```
-
-### Promise.all(iterable)
-
-所有 Promise 都成功才成功，任一失败则失败。
-
-```js
-const p1 = Promise.resolve(1);
-const p2 = Promise.resolve(2);
-const p3 = Promise.resolve(3);
-
-Promise.all([p1, p2, p3])
-  .then((values) => console.log(values)) // [1, 2, 3]
-  .catch((error) => console.log(error));
-
-// 有一个失败
-const p4 = Promise.reject("error");
-Promise.all([p1, p2, p4])
-  .then((values) => console.log(values))
-  .catch((error) => console.log(error)); // 'error'
-```
-
-### Promise.race(iterable)
-
-返回第一个 settled 的 Promise 结果（无论成功失败）。
-
-```js
-const fast = new Promise((resolve) => setTimeout(() => resolve("快"), 100));
-const slow = new Promise((resolve) => setTimeout(() => resolve("慢"), 500));
-
-Promise.race([fast, slow]).then(console.log); // '快'
-```
-
-### Promise.allSettled(iterable)
-
-等待所有 Promise 都 settled，返回每个结果状态。
-
-```js
-const p1 = Promise.resolve(1);
-const p2 = Promise.reject("error");
-
-Promise.allSettled([p1, p2]).then(console.log);
-// [
-//   { status: 'fulfilled', value: 1 },
-//   { status: 'rejected', reason: 'error' }
-// ]
-```
-
-### Promise.any(iterable)
-
-返回第一个成功的 Promise，全部失败才失败。
-
-```js
-const p1 = Promise.reject("error1");
-const p2 = Promise.resolve("success");
-const p3 = Promise.reject("error2");
-
-Promise.any([p1, p2, p3]).then(console.log); // 'success'
-
-// 全部失败
-Promise.any([p1, p3]).catch((e) => {
-  console.log(e); // AggregateError: All promises were rejected
-  console.log(e.errors); // ['error1', 'error2']
-});
-```
-
----
+- Promise.resolve(value)
+- Promise.reject(reason)
+- Promise.all(iterable)
+- Promise.race(iterable)
+- Promise.allSettled(iterable)
+- Promise.any(iterable)
 
 ## 常见面试题
 
-### 1. 基础输出题
-
-```js
-console.log(1);
-
-setTimeout(() => {
-  console.log(2);
-}, 0);
-
-Promise.resolve()
-  .then(() => {
-    console.log(3);
-  })
-  .then(() => {
-    console.log(4);
-  });
-
-console.log(5);
-```
-
-**答案**: `1, 5, 3, 4, 2`
-
-**解析**:
-
-- 同步代码先执行：1, 5
-- Promise.then 是微任务，先执行：3, 4
-- setTimeout 是宏任务，最后执行：2
-
----
-
-### 2. Promise 构造函数执行时机
+### Promise 构造函数执行时机
 
 ```js
 const promise = new Promise((resolve, reject) => {
+  // Promise 构造函数是同步执行的
   console.log(1);
-  resolve();
+  resolve(); // resolve() 后面的代码仍会执行
   console.log(2);
 });
 
 promise.then(() => {
+  //then 回调是异步的（微任务）
   console.log(3);
 });
 
@@ -280,15 +164,9 @@ console.log(4);
 
 **答案**: `1, 2, 4, 3`
 
-**解析**:
-
-- Promise 构造函数是同步执行的
-- resolve() 后面的代码仍会执行
-- then 回调是异步的（微任务）
-
 ---
 
-### 3. resolve 传入 Promise
+### resolve 传入 Promise
 
 ```js
 const p1 = new Promise((resolve) => {
@@ -303,126 +181,119 @@ const p2 = new Promise((resolve) => {
   }, 500);
 });
 
-p2.then((res) => console.log(res)); // 'p1' (1秒后输出)
+p2.then((res) => console.log(res)); // 'p1' (                           1秒后输出)
 ```
 
 **解析**: 当 `resolve(promise)` 时，会等待传入的 Promise settled 后，采用其状态和值。
 
 ---
 
-### 4. then 的返回值
+### Promise 构造器中抛错 vs resolve(Promise.reject())
 
 ```js
-Promise.resolve(1)
-  .then((res) => {
-    console.log(res); // 1
-    return 2;
-  })
-  .then((res) => {
-    console.log(res); // 2
-  })
-  .then((res) => {
-    console.log(res); // undefined
-  });
+// 情况 A
+const pA = new Promise((resolve) => {
+  resolve(Promise.reject("error A"));
+});
+
+// 情况 B
+const pB = new Promise((resolve, reject) => {
+  reject("error B");
+});
+
+// 情况 C
+const pC = new Promise(() => {
+  throw "error C";
+});
+
+pA.catch((e) => console.log("A:", e));
+pB.catch((e) => console.log("B:", e));
+pC.catch((e) => console.log("C:", e));
+// B: error B
+// C: error C
+// A: error A
 ```
 
 ---
 
-### 5. catch 的位置影响
+### 微任务时序（高频考点）
 
 ```js
-// 情况1
 Promise.resolve()
   .then(() => {
-    throw new Error("error");
+    console.log(1);
+    return Promise.resolve(2); // 返回一个 fulfilled Promise
   })
-  .catch((e) => console.log("caught:", e.message))
-  .then(() => console.log("继续执行"));
+  .then((res) => {
+    console.log(res);
+  });
 
-// 输出: 'caught: error', '继续执行'
-
-// 情况2
 Promise.resolve()
-  .then(
-    () => {
-      throw new Error("error");
-    },
-    (e) => console.log("onRejected:", e.message)
-  )
-  .then(() => console.log("继续执行"));
-
-// 输出: Uncaught Error (then 的第二个参数无法捕获第一个参数的错误)
-```
-
----
-
-### 6. 链式调用中的错误处理
-
-```js
-Promise.reject("error")
-  .then((res) => console.log("then1:", res))
-  .catch((err) => {
-    console.log("catch:", err);
-    return "recovered";
+  .then(() => {
+    console.log(3);
   })
-  .then((res) => console.log("then2:", res));
-
-// 输出:
-// 'catch: error'
-// 'then2: recovered'
-```
-
-**解析**: catch 处理错误后返回值，后续 then 接收该返回值。
-
----
-
-### 7. finally 的特性
-
-```js
-Promise.resolve("success")
-  .finally(() => {
-    console.log("finally");
-    return "finally return"; // 返回值被忽略
+  .then(() => {
+    console.log(4);
   })
-  .then((res) => console.log("then:", res));
-
-// 输出:
-// 'finally'
-// 'then: success' (不是 'finally return')
+  .then(() => {
+    console.log(5);
+  });
+  .then(() => {
+    console.log(6);
+  });
+// 1 3 4 5 2
 ```
-
-**解析**: finally 的返回值不会传递给后续 then（除非抛出错误或返回 rejected Promise）。
 
 ---
 
-### 8. Promise.all 的执行顺序
+### resolve(promise) vs return promise
 
 ```js
 const p1 = new Promise((resolve) => {
-  setTimeout(() => {
-    console.log("p1");
-    resolve(1);
-  }, 1000);
+  setTimeout(() => resolve("p1"), 1000);
 });
 
 const p2 = new Promise((resolve) => {
-  setTimeout(() => {
-    console.log("p2");
-    resolve(2);
-  }, 500);
+  resolve(p1);
 });
 
-Promise.all([p1, p2]).then((res) => console.log(res));
+const p3 = Promise.resolve().then(() => p1);
 
-// 输出:
-// 'p2' (500ms 后)
-// 'p1' (1000ms 后)
-// [1, 2] (结果顺序与传入顺序一致)
+p2.then((res) => console.log("p2:", res));
+p3.then((res) => console.log("p3:", res));
+
+console.log("p2 === p1:", p2 === p1);
+console.log("p3 === p1:", p3 === p1);
 ```
+
+**输出**:
+
+```text
+p2 === p1: false
+p3 === p1: false
+p2: p1
+p3: p1
+```
+
+**核心解析**:
+
+1.  **引用不相等**:
+
+    - `p1` 是源 Promise。
+    - `p2` 是 `new Promise` 创建的新实例。即使 `resolve(p1)`，它也只是锁定状态，而非返回同一个对象。
+    - `p3` 是 `.then()` 返回的新实例。
+    - 所以 `p2 !== p1` 且 `p3 !== p1`。
+
+2.  **执行顺序 (p2 先于 p3)**:
+    - `p2` 在构造函数中直接 `resolve(p1)`。这是一个同步操作（或非常早的订阅），`p2` 立即订阅了 `p1` 的状态。
+    - `p3` 通过 `Promise.resolve().then(() => p1)` 创建。这是一个**微任务**。只有当这个微任务执行时，回调函数 `() => p1` 被调用，`p3` 才开始订阅 `p1`。
+    - 因此，`p2` 比 `p3` 更早进入 `p1` 的等待队列。
+    - 当 1 秒后 `p1` settled (fulfilled) 时，它会按顺序通知订阅者：先 `p2`，后 `p3`。
+    - 所以 `p2` 的回调先执行，`p3` 的回调后执行。
 
 ---
 
-### 9. async/await 与 Promise
+### async/await 与 Promise
 
 ```js
 async function async1() {
@@ -474,244 +345,61 @@ console.log("end");
 
 ---
 
-## 手写 Promise
+## 手写 Promise.all()
 
-### 简易版实现
+- 实现要点：
 
-```js
-class MyPromise {
-  static PENDING = "pending";
-  static FULFILLED = "fulfilled";
-  static REJECTED = "rejected";
+  - 输入检查：先判断是否为数组。
+  - 结果顺序：使用 results[index] = value 确保结果数组的顺序与入参 Promise 顺序一致，而不是谁先完成谁先排进去。
+  - 错误处理：只要有一个 Promise 失败，reject 立即触发（Fail-fast）。
+  - 计数器：使用 count 记录成功的数量，当 count === len 时才最终 resolve。
+  - 兼容性：使用 Promise.resolve(p) 包裹每一项，确保数组中包含非 Promise 值时也能正常处理。
 
-  constructor(executor) {
-    this.status = MyPromise.PENDING;
-    this.value = undefined;
-    this.reason = undefined;
-    this.onFulfilledCallbacks = [];
-    this.onRejectedCallbacks = [];
-
-    const resolve = (value) => {
-      if (this.status === MyPromise.PENDING) {
-        this.status = MyPromise.FULFILLED;
-        this.value = value;
-        this.onFulfilledCallbacks.forEach((fn) => fn());
-      }
-    };
-
-    const reject = (reason) => {
-      if (this.status === MyPromise.PENDING) {
-        this.status = MyPromise.REJECTED;
-        this.reason = reason;
-        this.onRejectedCallbacks.forEach((fn) => fn());
-      }
-    };
-
-    try {
-      executor(resolve, reject);
-    } catch (error) {
-      reject(error);
-    }
-  }
-
-  then(onFulfilled, onRejected) {
-    // 值穿透
-    onFulfilled =
-      typeof onFulfilled === "function" ? onFulfilled : (value) => value;
-    onRejected =
-      typeof onRejected === "function"
-        ? onRejected
-        : (reason) => {
-            throw reason;
-          };
-
-    const promise2 = new MyPromise((resolve, reject) => {
-      const fulfilledMicrotask = () => {
-        queueMicrotask(() => {
-          try {
-            const x = onFulfilled(this.value);
-            this.resolvePromise(promise2, x, resolve, reject);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      };
-
-      const rejectedMicrotask = () => {
-        queueMicrotask(() => {
-          try {
-            const x = onRejected(this.reason);
-            this.resolvePromise(promise2, x, resolve, reject);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      };
-
-      if (this.status === MyPromise.FULFILLED) {
-        fulfilledMicrotask();
-      } else if (this.status === MyPromise.REJECTED) {
-        rejectedMicrotask();
-      } else {
-        this.onFulfilledCallbacks.push(fulfilledMicrotask);
-        this.onRejectedCallbacks.push(rejectedMicrotask);
-      }
-    });
-
-    return promise2;
-  }
-
-  resolvePromise(promise2, x, resolve, reject) {
-    if (promise2 === x) {
-      return reject(new TypeError("Chaining cycle detected"));
-    }
-
-    if (x instanceof MyPromise) {
-      x.then(resolve, reject);
-    } else {
-      resolve(x);
-    }
-  }
-
-  catch(onRejected) {
-    return this.then(null, onRejected);
-  }
-
-  finally(onFinally) {
-    return this.then(
-      (value) => MyPromise.resolve(onFinally()).then(() => value),
-      (reason) =>
-        MyPromise.resolve(onFinally()).then(() => {
-          throw reason;
-        })
-    );
-  }
-
-  static resolve(value) {
-    if (value instanceof MyPromise) return value;
-    return new MyPromise((resolve) => resolve(value));
-  }
-
-  static reject(reason) {
-    return new MyPromise((_, reject) => reject(reason));
-  }
-
-  static all(promises) {
-    return new MyPromise((resolve, reject) => {
-      const results = [];
-      let count = 0;
-
-      if (promises.length === 0) {
-        return resolve(results);
-      }
-
-      promises.forEach((promise, index) => {
-        MyPromise.resolve(promise).then(
-          (value) => {
-            results[index] = value;
-            count++;
-            if (count === promises.length) {
-              resolve(results);
-            }
-          },
-          (reason) => {
-            reject(reason);
-          }
-        );
-      });
-    });
-  }
-
-  static race(promises) {
-    return new MyPromise((resolve, reject) => {
-      promises.forEach((promise) => {
-        MyPromise.resolve(promise).then(resolve, reject);
-      });
-    });
-  }
-}
-```
-
----
-
-## 实用场景
-
-### 1. 并发请求控制
+- 实现代码：
 
 ```js
-async function limitConcurrency(tasks, limit) {
-  const results = [];
-  const executing = [];
-
-  for (const task of tasks) {
-    const p = Promise.resolve().then(() => task());
-    results.push(p);
-
-    if (tasks.length >= limit) {
-      const e = p.then(() => executing.splice(executing.indexOf(e), 1));
-      executing.push(e);
-      if (executing.length >= limit) {
-        await Promise.race(executing);
-      }
+function promiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    if (!Array.isArray(promises)) {
+      return reject(new TypeError("Argument must be an array"));
     }
-  }
 
-  return Promise.all(results);
-}
-```
+    const results = [];
+    let count = 0;
+    const len = promises.length;
 
-### 2. 超时处理
+    if (len === 0) {
+      return resolve(results);
+    }
 
-```js
-function promiseWithTimeout(promise, timeout) {
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error("Timeout")), timeout);
+    promises.forEach((p, index) => {
+      // Promise.resolve 包裹，确保处理非 Promise 值
+      Promise.resolve(p).then(
+        (value) => {
+          results[index] = value; // 保持原有顺序
+          count++;
+          if (count === len) {
+            resolve(results); // 全部成功
+          }
+        },
+        (error) => {
+          reject(error); // 只要有一个失败，立刻失败
+        }
+      );
+    });
   });
-
-  return Promise.race([promise, timeoutPromise]);
 }
 
-// 使用
-promiseWithTimeout(fetch("/api/data"), 5000)
-  .then((response) => response.json())
-  .catch((error) => console.log(error.message));
+// 测试代码
+const p1 = Promise.resolve(1);
+const p2 = new Promise((resolve) => setTimeout(() => resolve(2), 1000));
+const p3 = Promise.resolve(3);
+
+promiseAll([p1, p2, p3]).then(console.log).catch(console.error);
+// 1秒后输出 [1, 2, 3]
+
+promiseAll([p1, Promise.reject("error"), p3])
+  .then(console.log)
+  .catch(console.error);
+// 输出 'error'
 ```
-
-### 3. 重试机制
-
-```js
-async function retry(fn, retries = 3, delay = 1000) {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (i === retries - 1) throw error;
-      await new Promise((r) => setTimeout(r, delay));
-    }
-  }
-}
-
-// 使用
-retry(() => fetch("/api/data"), 3, 1000)
-  .then((response) => response.json())
-  .catch((error) => console.log("所有重试都失败"));
-```
-
----
-
-## 总结
-
-| 方法                 | 说明             | 返回时机                  |
-| -------------------- | ---------------- | ------------------------- |
-| `Promise.all`        | 所有成功才成功   | 全部 fulfilled / 首个失败 |
-| `Promise.race`       | 取最快的结果     | 首个 settled              |
-| `Promise.allSettled` | 获取所有结果状态 | 全部 settled              |
-| `Promise.any`        | 取第一个成功     | 首个 fulfilled / 全部失败 |
-
-**核心要点**:
-
-1. Promise 状态不可逆
-2. 构造函数同步执行，then/catch/finally 异步执行（微任务）
-3. then 返回新 Promise，支持链式调用
-4. catch 能捕获前面所有的错误
-5. finally 不接收参数，返回值被忽略（除非抛错）

@@ -1,0 +1,14 @@
+{
+  "appName": "文件下载系统",
+  "version": "1.0.0",
+  "settings": {
+    "maxFileSize": "100MB",
+    "allowedTypes": ["pdf", "docx", "xlsx", "txt", "zip", "jpg", "png"],
+    "theme": "light",
+    "language": "zh-CN"
+  },
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  }
+}

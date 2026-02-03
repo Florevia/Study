@@ -1,0 +1,25 @@
+{
+  "name": "websocket",
+  "version": "0.0.1",
+  "description": "WebSocket 实时文档协作编辑器 - 支持多用户同时编辑、光标同步、冲突处理",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lilin <lilin@lilin.com> (https://github.com/lilin)",
+  "license": "MIT",
+  "packageManager": "pnpm@10.26.1",
+  "dependencies": {
+    "express": "^5.2.1",
+    "uuid": "^13.0.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.6",
+    "@types/ws": "^8.18.1"
+  }
+}

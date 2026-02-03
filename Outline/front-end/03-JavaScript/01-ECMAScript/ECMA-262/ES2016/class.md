@@ -1,31 +1,45 @@
 # Class 类
 
-## 一、面向对象编程（OOP）Object-Oriented Programming
+## 前置知识
+
+### TS 中的类 VS ES2016 中的类
+
+- 类 (Class)：TS 的类就是 ES2016 的类，但加了“访问控制”和“类型检查”。
+
+  - ES2016：只有 constructor、方法、继承。
+  - TypeScript：在 ES2016 基础上增加了：
+
+    - 修饰符：public, private, protected, readonly (这些在 JS 运行时会被移除)。
+    - 属性类型声明。
+    - abstract (抽象类)。
+
+- implements (实现接口)：TS 独有。
+
+  - 为了在写代码时指明"对象长啥样"，用于定义契约（Contract）和形状（Shape）
+
+## 一、面向对象编程（OOP）
 
 ### 含义
 
-- 一种编程范式，将程序组织成一组相互作用的对象。每个对象包含：
+- 一种编程范式，将程序组织成一组相互作用的对象。
+  - 数据（属性/状态）
+  - 行为（方法/功能）
 
-- 数据（属性/状态）
-- 行为（方法/功能）
-
-### 面向对象的核心思想
+### 核心思想
 
 1. 抽象：提取事物的本质特征，忽略无关细节
 2. 封装：将数据和操作数据的方法绑定在一起，隐藏内部实现
 3. 继承：子类可以继承父类的属性和方法，实现代码复用
 4. 多态：同一个方法在不同对象上有不同的表现
 
-### 为什么需要面向对象？
+### 优势
 
-| 优势           | 说明                               |
-| -------------- | ---------------------------------- |
-| **代码复用**   | 通过继承避免重复代码               |
-| **易于维护**   | 修改集中在类定义中                 |
-| **模块化**     | 将复杂问题分解成小的、可管理的对象 |
-| **更贴近现实** | 用对象模拟现实世界的实体           |
-
----
+| 优势         | 说明                               |
+| ------------ | ---------------------------------- |
+| **代码复用** | 通过继承避免重复代码               |
+| **易于维护** | 修改集中在类定义中                 |
+| **模块化**   | 将复杂问题分解成小的、可管理的对象 |
+| **贴近现实** | 用对象模拟现实世界的实体           |
 
 ## 二、Class 的基本语法
 
@@ -43,7 +57,7 @@
 
 ### Class 的方法
 
-**1.实例方法(Instance Methods)**
+#### 1.实例方法
 
 ```js
 class Person {
@@ -53,20 +67,22 @@ class Person {
 }
 ```
 
-**2. 静态方法(Static Methods)**
+#### 2. 静态方法
+
+`static` 关键字：
 
 ```js
 class Person {
   static count = 0;
   static getCount() {
-    return this.count; // this 指向类本身
+    return this.count; // this 指向类本身！！！
   }
 }
 ```
 
-**3. 私有方法(Private Methods)**
+#### 3. 私有方法
 
-ES2022 引入了私有方法，使用 `#` 前缀：
+`#` 前缀：
 
 ```js
 class Person {
@@ -76,9 +92,11 @@ class Person {
 }
 ```
 
+---
+
 ### Class 的属性
 
-**1. 实例属性**
+#### 1. 实例属性
 
 - 在 constructor 中定义
 
@@ -90,7 +108,7 @@ class Person {
 }
 ```
 
-- 类字段（Class Fields, ES2022）
+- 类字段
 
 ```js
 class Person {
@@ -98,11 +116,27 @@ class Person {
 }
 ```
 
-**2. 静态属性**
+#### 2. 静态属性
 
-**3. 私有属性**
+`static` 关键字：
 
-**4. 访问器属性（Getter/Setter）**
+```js
+class Person {
+  static count = 0;
+}
+```
+
+#### 3. 私有属性
+
+`#` 前缀：
+
+```js
+class Person {
+  #privateProperty = "private";
+}
+```
+
+#### 4. 访问器属性
 
 使用 `get` 和 `set` 关键字定义：
 
@@ -122,21 +156,21 @@ class Person {
 }
 ```
 
+---
+
+### 属性和方法的可访问性对比
+
+| 类型         | 关键字/前缀 | 定义位置               | 访问方式（外部） | 访问方式（内部）                           | 说明                                             |
+| :----------- | :---------- | :--------------------- | :--------------- | :----------------------------------------- | :----------------------------------------------- |
+| **实例成员** | 无          | 类的顶层或 constructor | `instance.xxx`   | `this.xxx`                                 | 属于**每个实例对象**，可以被继承                 |
+| **静态成员** | `static`    | 类的顶层               | `Class.xxx`      | `Class.xxx` 或 `this.xxx` (仅在静态方法中) | 属于**类本身**，不能通过实例访问                 |
+| **私有成员** | `#`         | 类的顶层               | ❌ 不可访问      | `this.#xxx`                                | 只能在**类定义的内部**访问，实例和子类都无法访问 |
+
+---
+
 ### Class 的继承
 
-使用 `extends` 关键字实现类的继承：
-
-```js
-class Student extends Person {
-  constructor(age) {
-    this.age = age;
-  }
-}
-```
-
-使用`super` 有两种用法：
-
-1. 作为函数调用（在 constructor 中）：
+#### 1. `super` 作为函数调用（在 constructor 中）
 
 - 调用父类的构造函数
 - 必须在使用 `this` 之前调用，因为子类没有自己的 this，必须先调用父类的构造函数创建 this，子类才能使用 this
@@ -151,7 +185,7 @@ class Student extends Person {
 }
 ```
 
-2. 作为对象使用：
+#### 2. `super` 作为对象使用
 
 ```js
 class Father {
@@ -187,26 +221,36 @@ class Son extends Father {
 }
 ```
 
-- 用于调用父类的方法
-- 注意：
-  - 子类可以覆盖父类方法
-  - 子类可以直接继承父类方法
+#### 3. 注意
 
----
+- 子类可以覆盖父类方法
+- 子类可以直接继承父类方法
 
-### this 绑定问题
+```js
+class Animal {
+  eat() {
+    console.log("Animal is eating");
+  }
+  sleep() {
+    console.log("Animal is sleeping");
+  }
+}
 
-1. **箭头函数（推荐）**：自动绑定 this
-2. **bind 方法**：在 constructor 中绑定
-3. **箭头函数包装**：调用时使用箭头函数
+class Dog extends Animal {
+  // 1. 覆盖 (Override)：重写父类方法
+  eat() {
+    console.log("Dog is eating bones");
+  }
+  // 2. 继承 (Inherit)：什么都不写，直接拥有 sleep 方法
+}
 
----
+const dog = new Dog();
+dog.eat(); // "Dog is eating bones" (子类自己的)
+dog.sleep(); // "Animal is sleeping"  (从父类借来的)
+```
 
-### 参考资源
+## 三、参考资源
 
 - **MDN Web Docs**：[Classes - JavaScript | MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
 - **ECMAScript 规范**：[ECMAScript® 2015 Language Specification](https://262.ecma-international.org/6.0/)
 - **JavaScript.info**：[Classes](https://javascript.info/classes)
-- **You Don't Know JS**：深入理解原型和对象
-
----

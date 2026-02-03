@@ -1,0 +1,13 @@
+{
+  "name": "session-demo",
+  "version": "1.0.0",
+  "description": "最简单的session示例",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3"
+  }
+}
